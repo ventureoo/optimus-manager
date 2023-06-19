@@ -90,24 +90,6 @@ def do_xsetup(requested_mode):
     except subprocess.CalledProcessError as e:
         logger.error(f"ERROR : cannot run {script_path} :\n{e.stderr}")
 
-
-def set_DPI(config):
-
-    logger = get_logger()
-
-    dpi_str = config["nvidia"]["dpi"]
-
-    if dpi_str == "":
-        return
-
-    try:
-        subprocess.check_call(
-            f"xrandr --dpi {dpi_str}", shell=True, text=True,
-            stderr=subprocess.PIPE, stdout=subprocess.DEVNULL)
-    except subprocess.CalledProcessError as e:
-        logger.error(f"Cannot set DPI (xrandr error):\n{e.stderr}")
-
-
 def _get_xsetup_script_path(requested_mode):
 
     logger = get_logger()
@@ -168,6 +150,13 @@ def _generate_nvidia(config, bus_ids, xorg_extra):
 
     if config["nvidia"]["allow_external_gpus"] == "yes":
         text += "\tOption \"AllowExternalGpus\"\n"
+
+    if config["nvidia"]["dpi"] != "":
+        try:
+            dpi = int(config["nvidia"]["dpi"])
+            text += "\tOption \"DPI\" \"%d x %d\"\n" % (dpi)
+        except Exception:
+            pass
 
     text += "EndSection\n\n"
 
