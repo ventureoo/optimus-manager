@@ -3,7 +3,7 @@ import os
 from ..config import load_config
 from ..kernel import setup_kernel_state
 from .. import var
-from ..xorg import configure_xorg, cleanup_xorg_conf, is_xorg_running
+from ..xorg import configure_xorg, cleanup_xorg_conf, is_xorg_running, do_xsetup
 from ..log_utils import set_logger_config, get_logger
 
 
@@ -50,11 +50,12 @@ def main():
         if setup_kernel:
             setup_kernel_state(config, prev_state, requested_mode)
         configure_xorg(config, requested_mode)
+        do_xsetup(requested_mode)
 
         state = {
-            "type": "pending_post_xorg_start",
+            "type": "done",
             "switch_id": switch_id,
-            "requested_mode": requested_mode,
+            "current_mode": requested_mode,
         }
 
         var.write_state(state)
