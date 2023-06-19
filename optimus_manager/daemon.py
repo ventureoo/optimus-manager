@@ -5,6 +5,9 @@ import signal
 import select
 import socket
 import json
+from .kernel import setup_kernel_state
+from .config import load_config
+from .xorg import configure_xorg
 from . import envs
 from . import var
 from .log_utils import set_logger_config, get_logger
@@ -121,6 +124,14 @@ def _process_command(logger, msg):
         elif command["type"] == "user_config":
             _replace_user_config(logger, command["args"]["content"])
 
+        elif command["type"] == "do_swtich":
+            config = load_config()
+            prev_state = var.load_state()
+
+            if command["args"]["kernel_setup"]:
+                setup_kernel_state(config, prev_state, prev_state["requested_mode"])
+
+            configure_xorg(config, prev_state["requested_mode"])
         else:
             logger.error("Invalid command  \"%s\" ! Unknown type %s" % (msg, command["type"]))
 
