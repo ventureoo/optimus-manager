@@ -19,7 +19,6 @@ setup(
         'console_scripts': [
             'optimus-manager=optimus_manager.client:main',
             'prime-switch=optimus_manager.hooks.pre_xorg_start:main',
-            'prime-offload=optimus_manager.hooks.post_xorg_start:main'
         ],
     },
     package_data={'optimus_manager': ['config_schema.json']},
